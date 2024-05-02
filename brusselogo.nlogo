@@ -1,184 +1,149 @@
-globals [stages colors phase]
-patches-own [stage]
-turtles-own [character]
+; wiki:
+; A -> X
+; 2X + Y -> 3X
+; B + X -> Y + D
+; X -> E
+; With A and B in vast excess, differential eq...
+; Fixed point at X = A, Y = B/A
+; Fixed point becomes unstable at B > 1 + A^2, leading to oscillation
+; also! someday- compare with SDM
 
 
-;Setup-Go
+; software dominos.com
+; 2X -alpha-> 3X + Y
+; X + Y -beta-Z> 2Y
+; dimensionless, concentration ++
+
+; rock paper scissor lizard spoc´k
+;
+
+
+
+
+
+globals  [ wuxing ]
+patches-own [  ]
 
 to setup
-  ca
-  resize-world 0 world-axis 0 world-axis
-  set stages ["water" "fire" "metal" "wood" "earth"]
-  set colors [94 15 119 72 32]
-  set phase 0
-  setup-patches
-  setup-turtles
-  reset-ticks
-
-
-
-end
-
-to setup-patches
-  ask patches [set stage one-of stages]
-  ask patches [ recolor ]
-
-  ;new, ALT SETUP!
-;    if random-terrain  [
-;   ask patches [ set pcolor random 99 ]
-;   let counter 0
-;   while [ counter <  99 ] [
-;     ask patches [ set pcolor [pcolor] of one-of neighbors ]
-;     set counter counter + 1
-;   ]
-
-
-end
-
-to recolor
-  set pcolor item position stage stages colors
-end
-
-
-to setup-turtles
-  ;?sprout from random earth patch?
-  crt pop [
-    setxy random-xcor random-ycor
-    set character one-of stages
-    ;set color random 140
-    set shape "circle"
-    set size .3
+  clear-all
+  if colors = 3 [set wuxing [red yellow blue]];orange violet green
+  if colors = 5 [set wuxing [ yellow white violet lime sky ] ]
+  if colors = "all-in" [set wuxing[ red orange brown yellow green lime turquoise cyan sky blue violet magenta pink white black gray ]] ; -whiteblack
+  ;if colors = "Rall-in" [set wuxing n-values WOW [random 140] ] set wuxing;white black gray ]] ; -whiteblack
+  ask patches [
+    set pcolor one-of wuxing
   ]
-  ask patches [set pcolor [pcolor] of one-of neighbors ]
 
+  reset-ticks
 end
+
 
 to go
-  if ticks < duration [
-    interact
-    phase-into
-    tick
-  ]
-end
-
-
-;Patch logic:
-
-to phase-into
   ask patches [
-  ;  if count neighbors with [ stage = "earth" ] = 0 [ set stage "earth" set phase 0 ]
-    if count neighbors with [ stage = "metal" ] > 3 [ set stage "metal" set phase 1 ]
-    if count neighbors with [ stage = "water" ] > 3 [ set stage "water" set phase 2 ]
-    if count neighbors with [ stage = "wood" ] > 3 [ set stage "wood" set phase 3 ]
-    if count neighbors with [ stage = "fire" ] > 3 [ set stage "fire" set phase 4 ]
-    if count neighbors with [ stage = "earth" ] = 0 [ set stage "earth" set phase 0 ]
-    ;if count neighbors with [ stage = "earth" ] < 3 [ set stage "earth" set phase 0 ]
-    ;if count neighbors with [ stage = "fire" ] > 7 [ set stage "earth" set phase 4 ]
-    ;if count neighbors with [ stage = "water" ] > 7 [ set stage "earth" set phase 4 ]
-    ;if count neighbors with [ stage = "metal" ] > 7 [ set stage "earth" set phase 4 ]
-    recolor
-
-  ]
-  show phase
-
-    ;set similar-nearby count (turtles-on neighbors)  with [ color = [ color ] of myself ]
-
-  ;show [stage] of neighbors4
-
-    ;if no earth around, become earth
-    ;"earth" not member? [neighbors4]
-    ;others: converge
-
-
-end
-
-
-
-to xiangsheng
-end
-
-to xiangke
-end
-
-
-
-;Turtle logic:
-
-
-
-to interact
-  ask turtles [
-    move-turtle
-    if count turtles-here > world-axis [
-      die
-    ]
-
-    if stage = "fire" [
-      die
-    ]
-    if stage = "water" [
-      move-turtle
-    ]
-    if stage = "wood" [
-      hatch 1
-    ]
-    if stage = "metal" [
-      instrumentalize
-      die
-    ]
-  ]
-end
-
-to move-turtle
-    right random 360
-    forward random 5
-end
-
-
-to instrumentalize
-  if count turtles < world-axis [
-    hatch 1
-  ]
-  if count turtles > world-axis * world-axis[
-    ask n-of world-axis turtles [die]
+    let beats-me item (((position pcolor wuxing + 1 + random tilt ) ) mod ( length wuxing ) ) wuxing
+    if count neighbors with [pcolor =  beats-me ] > threshold [ set pcolor beats-me ]
+    if random-float 1 < noise [set pcolor one-of wuxing]
   ]
 
+  tick
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;to RPSLSp
+;  if pcolor = brown and count neighbors with [pcolor = white] > 2 [ set pcolor white ]
+;  if pcolor = white and count neighbors with [pcolor = grey] > 2 [ set pcolor grey ]
+;  if pcolor = grey and count neighbors with [pcolor = green] > 2 [ set pcolor green ]
+;  if pcolor = green and count neighbors with [pcolor = sky] > 2 [ set pcolor sky ]
+;  if pcolor = sky and count neighbors with [pcolor = brown] > 2 [ set pcolor brown ]
+;
+;end
+
+;to-report beats-me
+;  if pcolor = 35 [ report 9.9 ]
+;  if pcolor = 9.9 [ report 5 ]
+;  if pcolor = 5 [ report 55 ]
+;  if pcolor = 55 [ report 95 ]
+;  if pcolor = 95 [ report 35 ]
+;end
+;
+
+
+;to do-alpha
+;
+;
+;end
+;
+;
+;to do-beta
+;  let neighborhood patches in-radius 25
+;
+;end
+;
+;set types [ "X" "Y" ] ;"A" "B" "D" "E" ]
+;  if t = "X" [ set pcolor sky ]
+;  if t = "Y" [ set pcolor yellow ]
+  ;if t = "A" [ set pcolor 2 ]
+  ;if t = "B" [ set pcolor 4 ]
+  ;if t = "D" [ set pcolor 6 ]
+  ;if t = "E" [ set pcolor 8 ]
+;to color-me
+;
+;    color-me
+;end
 @#$#@#$#@
 GRAPHICS-WINDOW
-394
-17
-895
-519
+299
+54
+709
+465
 -1
 -1
-18.962
+2.0
 1
 10
 1
 1
 1
 0
-1
-1
-1
 0
-25
 0
-25
 1
-1
+-100
+100
+-100
+100
+0
+0
 1
 ticks
 30.0
 
 BUTTON
-41
-36
-107
-69
+50
+33
+113
+66
 NIL
-setup
+setup\n
 NIL
 1
 T
@@ -190,10 +155,10 @@ NIL
 1
 
 BUTTON
-123
-35
-186
-68
+69
+121
+132
+154
 NIL
 go
 NIL
@@ -204,49 +169,99 @@ NIL
 NIL
 NIL
 NIL
+1
+
+BUTTON
+94
+216
+157
+249
+NIL
+go
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+81
+363
+253
+396
+threshold
+threshold
 0
-
-MONITOR
-33
-382
-111
-427
-wordwalkers
-count turtles
-17
+8
+2.0
 1
-11
-
-MONITOR
-116
-382
-170
-427
-waters
-count patches with [ stage = \"water\" ]
-17
 1
-11
+NIL
+HORIZONTAL
+
+CHOOSER
+39
+425
+177
+470
+colors
+colors
+3 5 "all-in"
+1
+
+SLIDER
+73
+289
+245
+322
+tilt
+tilt
+-16
+16
+1.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+722
+184
+894
+217
+noise
+noise
+0
+1
+0.0
+0.001
+1
+NIL
+HORIZONTAL
 
 MONITOR
-175
-382
-237
-427
-danger
-(count patches with [ stage = \"fire\" ] / ( world-axis * world-axis ))
+762
+67
+933
+112
+NIL
+variance [pcolor] of patches
 17
 1
 11
 
 PLOT
-33
-224
-359
-374
-pop
-time
-totals
+948
+166
+1248
+461
+sliders
+NIL
+NIL
 0.0
 10.0
 0.0
@@ -255,73 +270,27 @@ true
 false
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "plot count turtles"
-"fire" 1.0 0 -2674135 true "" "plot count patches with [stage = \"fire\"]"
+"threshold" 1.0 0 -10899396 true "" "plot threshold"
+"tilt" 1.0 0 -8630108 true "" "plot tilt"
+"noise" 1.0 0 -955883 true "" "plot noise * 10"
 
-INPUTBOX
-42
-84
-106
-144
-world-axis
-25.0
-1
-0
-Number
-
-INPUTBOX
-156
-85
-206
-145
-pop
-99.0
-1
-0
-Number
-
-SLIDER
-37
+PLOT
+946
+10
+1250
 160
-354
-193
-duration
-duration
-0
-999
-99.0
-1
-1
-NIL
-HORIZONTAL
-
-BUTTON
-198
-35
-261
-68
-gof
-go
-T
-1
-T
-OBSERVER
+var
 NIL
 NIL
-NIL
-NIL
-1
-
-MONITOR
-243
-382
-332
-427
-instruments
-(count patches with [ stage = \"metal\" ] / ( world-axis * world-axis ))
-17
-1
-11
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot variance [pcolor] of patches"
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -665,7 +634,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.2.2
+NetLogo 6.4.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
