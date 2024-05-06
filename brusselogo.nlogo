@@ -41,7 +41,13 @@ end
 to go
   ask patches [
     let beats-me item (((position pcolor wuxing + 1 + random tilt ) ) mod ( length wuxing ) ) wuxing
-    if count neighbors with [pcolor =  beats-me ] > threshold [ set pcolor beats-me ]
+    let debeats-me item (((position pcolor wuxing - 2 + random tilt ) ) mod ( length wuxing ) ) wuxing
+
+    if random-float 1 < generating-ness [ if count neighbors with [pcolor =  beats-me ] > threshold [ set pcolor beats-me ]]
+    if random-float 1 < overcoming-ness [ if count neighbors with [pcolor =  debeats-me ] > threshold [ set pcolor debeats-me ]]
+
+
+
     if random-float 1 < noise [set pcolor one-of wuxing]
   ]
 
@@ -197,7 +203,7 @@ threshold
 threshold
 0
 8
-2.0
+1.0
 1
 1
 NIL
@@ -222,17 +228,17 @@ tilt
 tilt
 -16
 16
-1.0
+0.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-722
-184
-894
-217
+43
+503
+215
+536
 noise
 noise
 0
@@ -291,6 +297,36 @@ false
 "" ""
 PENS
 "default" 1.0 0 -16777216 true "" "plot variance [pcolor] of patches"
+
+SLIDER
+762
+301
+934
+334
+generating-ness
+generating-ness
+0
+1
+0.28
+0.01
+1
+NIL
+HORIZONTAL
+
+SLIDER
+768
+354
+940
+387
+overcoming-ness
+overcoming-ness
+0
+1
+0.8
+0.01
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
