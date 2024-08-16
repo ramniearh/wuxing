@@ -119,19 +119,19 @@ end
 GRAPHICS-WINDOW
 299
 54
-709
-465
+508
+264
 -1
 -1
-2.0
+1.0
 1
 10
 1
 1
 1
 0
-0
-0
+1
+1
 1
 -100
 100
@@ -203,7 +203,7 @@ threshold
 threshold
 0
 8
-1.0
+0.0
 1
 1
 NIL
@@ -217,7 +217,7 @@ CHOOSER
 colors
 colors
 3 5 "all-in"
-1
+2
 
 SLIDER
 73
@@ -307,7 +307,7 @@ generating-ness
 generating-ness
 0
 1
-0.28
+1.0
 0.01
 1
 NIL
@@ -322,7 +322,7 @@ overcoming-ness
 overcoming-ness
 0
 1
-0.8
+1.0
 0.01
 1
 NIL
